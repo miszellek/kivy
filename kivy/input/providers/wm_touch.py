@@ -147,13 +147,24 @@ else:
             self.old_windProc = SetWindowLong_wrapper(
                 self.hwnd, GWL_WNDPROC, self.new_windProc)
 
-            self.caption_size = windll.user32.GetSystemMetrics(SM_CYCAPTION)
-
-        def update(self, dispatch_fn):
             win_rect = RECT()
             windll.user32.GetWindowRect(self.hwnd, byref(win_rect))
-            caption = self.caption_size
+            
+            client_rect = RECT()
+            windll.user32.GetClientRect.argtypes = [HANDLE, POINTER(RECT)] #redeclared: conlict with wm_pen declaration
+            windll.user32.GetClientRect(self.hwnd, byref(client_rect))
 
+            if win_rect.w == client_rect.w and win_rect.h == client_rect.h: #fullscren
+                self.fullscreen = True
+                self.win_rect = win_rect
+            else:
+                self.fullscreen = False
+                self.border_size = ((win_rect.w) - client_rect.right) / 2;
+                self.caption_size = win_rect.h - client_rect.h - self.border_size
+                #self.caption_size = windll.user32.GetSystemMetrics(SM_CYCAPTION) #on Aero += border_size, conflict with "borderless" setting
+
+
+        def update(self, dispatch_fn):
             while True:
                 try:
                     t = self.touch_events.pop()
@@ -161,9 +172,19 @@ else:
                     break
 
                 # adjust x,y to window coordinates (0.0 to 1.0)
-                x = (t.screen_x() - win_rect.x) / float(win_rect.w)
-                y = 1.0 - (t.screen_y() - win_rect.y - caption
-                           ) / float(win_rect.h)
+                if self.fullscreen:
+                    win_rect = self.win_rect # for faster access
+                    x = (t.screen_x() - win_rect.x) / float(win_rect.w)
+                    y = 1.0 - (t.screen_y() - win_rect.y) / float(win_rect.h)
+                else:
+                    win_rect = RECT()
+                    windll.user32.GetWindowRect(self.hwnd, byref(win_rect))
+
+                    border_size = self.border_size # for faster access
+                    caption_size = self.caption_size # for faster access
+
+                    x = (t.screen_x() - win_rect.x - border_size) / float(win_rect.w - (2 * border_size))
+                    y = 1.0 - (t.screen_y() - win_rect.y - caption_size) / float(win_rect.h - border_size - self.caption_size)
 
                 # actually dispatch input
                 if t.event_type == 'begin':

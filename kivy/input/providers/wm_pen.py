@@ -52,7 +52,7 @@ else:
         y = property(lambda self: self.top)
         w = property(lambda self: self.right - self.left)
         h = property(lambda self: self.bottom - self.top)
-    win_rect = RECT()
+    #win_rect = RECT()
 
     try:
         windll.user32.SetWindowLongPtrW.restype = WNDPROC
@@ -86,6 +86,8 @@ else:
             if msg not in (WM_LBUTTONDOWN, WM_MOUSEMOVE, WM_LBUTTONUP):
                 return
 
+            win_rect = RECT()
+            windll.user32.GetClientRect.argtypes = [HANDLE, POINTER(RECT)] #redeclared: conlict with wm_touch declaration
             windll.user32.GetClientRect(self.hwnd, byref(win_rect))
             x = c_int16(lParam & 0xffff).value / float(win_rect.w)
             y = c_int16(lParam >> 16).value / float(win_rect.h)
