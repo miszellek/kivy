@@ -244,6 +244,16 @@ class WindowBase(EventDispatcher):
 
             .. versionadded:: 1.9.0
 
+        `on_cursor_enter`:
+            Fired when when the cursor enters the window.
+
+            .. versionadded:: 1.9.1
+
+        `on_cursor_leave`:
+            Fired when when the cursor leaves the window.
+
+            .. versionadded:: 1.9.1
+
         `on_keyboard`: key, scancode, codepoint, modifier
             Fired when the keyboard is used for input.
 
@@ -580,6 +590,18 @@ class WindowBase(EventDispatcher):
     .. versionadded:: 1.2.0
     '''
 
+    show_cursor = BooleanProperty(True)
+    '''Set whether or not the cursor is shown on the window.
+
+    .. versionadded:: 1.9.1
+
+    :attr:`show_cursor` is a :class:`~kivy.properties.BooleanProperty` and
+    defaults to True.
+    '''
+
+    def _set_cursor_state(self, value):
+        pass
+
     @property
     def __self__(self):
         return self
@@ -596,7 +618,8 @@ class WindowBase(EventDispatcher):
         'on_motion', 'on_touch_down', 'on_touch_move', 'on_touch_up',
         'on_mouse_down', 'on_mouse_move', 'on_mouse_up', 'on_keyboard',
         'on_key_down', 'on_key_up', 'on_textinput', 'on_dropfile',
-        'on_request_close', 'on_joy_axis', 'on_joy_hat', 'on_joy_ball',
+        'on_request_close', 'on_cursor_enter', 'on_cursor_leave',
+        'on_joy_axis', 'on_joy_hat', 'on_joy_ball',
         'on_joy_button_down', 'on_joy_button_up', 'on_memorywarning')
 
     def __new__(cls, **kwargs):
@@ -659,6 +682,9 @@ class WindowBase(EventDispatcher):
         else:
             kwargs['left'] = Config.getint('graphics', 'left')
         kwargs['_size'] = (kwargs.pop('width'), kwargs.pop('height'))
+        if 'show_cursor' not in kwargs:
+            kwargs['show_cursor'] = Config.getboolean('graphics',
+                                                      'show_cursor')
 
         super(WindowBase, self).__init__(**kwargs)
 
@@ -669,6 +695,8 @@ class WindowBase(EventDispatcher):
 
         self.bind(softinput_mode=lambda *dt: self.update_viewport(),
                   keyboard_height=lambda *dt: self.update_viewport())
+
+        self.bind(show_cursor=lambda *dt: self._set_cursor_state(dt[1]))
 
         # init privates
         self._system_keyboard = Keyboard(window=self)
@@ -1147,6 +1175,26 @@ class WindowBase(EventDispatcher):
             When the bound function returns True the window will not be closed,
             so use with care because the user would not be able to close the
             program, even if the red X is clicked.
+        '''
+        pass
+
+    def on_cursor_enter(self, *largs):
+        '''Event called when the cursor enters the window.
+
+        .. versionadded:: 1.9.1
+
+        .. note::
+            This feature requires a SDL2 window provider.
+        '''
+        pass
+
+    def on_cursor_leave(self, *largs):
+        '''Event called when the cursor leaves the window.
+
+        .. versionadded:: 1.9.1
+
+        .. note::
+            This feature requires a SDL2 window provider.
         '''
         pass
 

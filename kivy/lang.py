@@ -681,7 +681,7 @@ and not by any previous styles that may have set `state_image`.
 .. note::
 
     Although the previous rules are cleared, they are still applied during
-    widget constrction, and are only removed when the new rule with the dash
+    widget construction and are only removed when the new rule with the dash
     is reached. This means that initially, previous rules could be used to set
     the property.
 
@@ -2206,7 +2206,9 @@ class BuilderBase(object):
         widget destructor.
 
         This effectively clearls all the KV rules associated with this widget.
-        For example::
+        For example:
+
+    .. code-block:: python
 
             >>> w = Builder.load_string(\'''
             ... Widget:
@@ -2252,7 +2254,9 @@ class BuilderBase(object):
 
             name: rule
 
-        For examples::
+        For example:
+
+        .. code-block:: python
 
             >>> w = Builder.load_string(\'''
             ... Widget:

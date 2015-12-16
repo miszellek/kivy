@@ -8,6 +8,17 @@ for Kivy and all its dependencies to be used with an existing Python installatio
 We also provide nightly wheels from Kivy `master <https://github.com/kivy/kivy>`_.
 See also :ref:`upgrade-win-dist`.
 
+.. note::
+
+    This page represents instructions for wheels starting with 1.9.1. Until
+    1.9.1 is released the nightly wheels have to be used because stable kivy wheels
+    have not been uploaded to pypi yet.
+
+.. warning::
+
+    Python 3.5 is currently not supported on Windows due to issues with MinGW and
+    Python 3.5.
+
 What are wheels, pip and wheel
 ------------------------------
 
@@ -22,9 +33,11 @@ distributions of a package that has already been compiled and do not require
 additional steps to install.
 
 When hosted on `pypi <https://pypi.python.org/pypi>`_ one installs a wheel
-using ``pip``, e.g. ``python -m pip install kivy``. To install a downloaded wheel
-file ``wheel`` must be used, e.g.
-``python -m wheel install Kivy-1.9.1.dev0-cp27-none-win32.whl``.
+using ``pip``, e.g. ``python -m pip install kivy``. When downloading and installing
+a wheel directly, ``python -m pip install wheel_file_name`` is used, such as:
+
+``python -m pip install C:\Kivy-1.9.1.dev-cp27-none-win_amd64.whl``
+
 
 Kivy's dependencies
 -------------------
@@ -36,8 +49,8 @@ packages of Kivy.deps, e.g. ``kivy.deps.sdl2``.
 
 Currently on Windows, we provide the following dependency
 wheels: ``gstreamer`` for audio and video and `glew` and ``sdl2`` for graphics
-and control. ``gstreamer`` is an optional dependency which doesn't need to be
-installed if no video/audio will be used.
+and control. ``gstreamer`` is an optional dependency which only needs to be
+installed if video display is desired.
 
 Command line
 ------------
@@ -92,11 +105,12 @@ Snapshot wheels of current Kivy master are created every night. They can be foun
 To use them, instead of doing `python -m pip install kivy` we'll install one of
 these wheels as follows.
 
+#. Perform steps 1 and 2 of the above Installation section.
 #. Download the appropriate wheel for your system.
 #. Rename the wheel to remove the version tag, e.g.
    ``Kivy-1.9.1.dev0_30112015_gitc68b630-cp27-none-win32.whl``
    should be renamed to ``Kivy-1.9.1.dev0-cp27-none-win32.whl``.
-#. Install it with ``python -m wheel install wheel-name`` where ``wheel-name``
+#. Install it with ``python -m pip install wheel-name`` where ``wheel-name``
    is the name of the renamed file.
 
 .. _dev-install-win:
@@ -188,7 +202,7 @@ Double-click method
 
 If you only have one Python installed, you can associate all *.py files with
 your python, if it isn't already, and then run it by double clicking. Or you can
-only do it once if you wnat to be able to choose each time:
+only do it once if you want to be able to choose each time:
 
 #. Right click on the Python file (.py file extension) of the application you want to launch
 #. From the context menu that appears, select *Open With*
