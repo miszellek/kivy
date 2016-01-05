@@ -23,10 +23,7 @@ else:
     print('Using distutils')
 
 
-if sys.version > '3':
-    PY3 = True
-else:
-    PY3 = False
+PY3 = sys.version > '3'
 
 if PY3:  # fix error with py3's LooseVersion comparisons
     def ver_equal(self, other):
@@ -292,7 +289,7 @@ def _check_and_fix_sdl2_mixer(f_path):
     rpath_to = "@rpath/../../../../SDL2.framework/Versions/A/SDL2"
     smpeg2_path = ("{}/Versions/A/Frameworks/smpeg2.framework"
                    "/Versions/A/smpeg2").format(f_path)
-    output = getoutput(("otool -L '{}'").format(smpeg2_path))
+    output = getoutput(("otool -L '{}'").format(smpeg2_path)).decode('utf-8')
     if "@executable_path" not in output:
         return
 
@@ -307,7 +304,7 @@ def _check_and_fix_sdl2_mixer(f_path):
         rpath_from, rpath_to, smpeg2_path))
 
     output = getoutput(("otool -L '{}'").format(smpeg2_path))
-    if "@executable_path" not in output:
+    if b"@executable_path" not in output:
         print("WARNING: Change successfully applied!")
         print("WARNING: You'll never see this message again.")
     else:
@@ -601,21 +598,22 @@ def determine_sdl2():
 
     sdl2_path = environ.get('KIVY_SDL2_PATH', None)
 
+    if sdl2_flags and not sdl2_path and platform == 'darwin':
+        return sdl2_flags
+
     # no pkgconfig info, or we want to use a specific sdl2 path, so perform
     # manual configuration
     flags['libraries'] = ['SDL2', 'SDL2_ttf', 'SDL2_image', 'SDL2_mixer']
     split_chr = ';' if platform == 'win32' else ':'
     sdl2_paths = sdl2_path.split(split_chr) if sdl2_path else []
 
-    inc_paths = sdl2_paths
     if not sdl2_paths:
         sdl_inc = join(dirname(sys.executable), 'include', 'SDL2')
         if isdir(sdl_inc):
             sdl2_paths = [sdl_inc]
         sdl2_paths.extend(['/usr/local/include/SDL2', '/usr/include/SDL2'])
 
-    flags['include_dirs'] = (
-        sdl2_paths if sdl2_paths else sdl2_paths)
+    flags['include_dirs'] = sdl2_paths
 
     flags['extra_link_args'] = []
     flags['extra_compile_args'] = []
