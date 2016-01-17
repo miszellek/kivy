@@ -59,7 +59,7 @@ class VideoGstplayer(VideoBase):
         Clock.schedule_once(self._do_eos, 0)
 
     def load(self):
-        Logger.debug('VideoGstplayer: Load <{}>'.format(self._filename))
+        Logger.debug('VideoGstplayer: Load <%s>' % self._filename)
         uri = self._get_uri()
         wk_self = ref(self)
         self.player_callback = partial(_on_gstplayer_buffer, wk_self)
@@ -129,6 +129,8 @@ class VideoGstplayer(VideoBase):
         uri = self.filename
         if not uri:
             return
+        if isinstance(uri, unicode):
+            uri = uri.encode('utf8')
         if not '://' in uri:
             uri = 'file:' + pathname2url(realpath(uri))
         return uri

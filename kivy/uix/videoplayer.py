@@ -520,6 +520,8 @@ class VideoPlayer(GridLayout):
         thumbnail = self.thumbnail
         if not thumbnail:
             filename = self.source.rsplit('.', 1)
+            if isinstance(filename[0], unicode):
+                filename[0] = filename[0].encode('utf8')
             thumbnail = filename[0] + '.png'
         self._image = VideoPlayerPreview(source=thumbnail, video=self)
         self.container.add_widget(self._image)
