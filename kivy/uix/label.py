@@ -815,9 +815,9 @@ class Label(Widget):
     '''
 
     font_hinting = OptionProperty(
-        'none', options=['normal', 'light', 'mono', 'none'])
+        'normal', options=[None, 'normal', 'light', 'mono'], allownone=True)
     '''What hinting option to use for font rendering.
-    Can be `'normal'`, `'light'`, `'mono'`, `'none'`
+    Can be one of `'normal'`, `'light'`, `'mono'` or None.
 
     .. note::
         This feature requires a SDL2 window provider.
@@ -825,11 +825,11 @@ class Label(Widget):
     .. versionadded:: 1.9.2
 
     :attr:`font_hinting` is an :class:`~kivy.properties.OptionProperty` and
-    defaults to `'none'`.
+    defaults to `'normal'`.
     '''
 
-    font_kerning = BooleanProperty(False)
-    '''Whether kerning is enable for font rendering
+    font_kerning = BooleanProperty(True)
+    '''Whether kerning is enabled for font rendering.
 
     .. note::
         This feature requires a SDL2 window provider.
@@ -837,11 +837,11 @@ class Label(Widget):
     .. versionadded:: 1.9.2
 
     :attr:`font_kerning` is a :class:`~kivy.properties.BooleanProperty` and
-    defaults to False.
+    defaults to True.
     '''
 
-    font_blended = BooleanProperty(False)
-    '''Whether blended or solid font rendering should be used
+    font_blended = BooleanProperty(True)
+    '''Whether blended or solid font rendering should be used.
 
     .. note::
         This feature requires a SDL2 window provider.
@@ -849,5 +849,5 @@ class Label(Widget):
     .. versionadded:: 1.9.2
 
     :attr:`font_blended` is a :class:`~kivy.properties.BooleanProperty` and
-    defaults to False.
+    defaults to True.
     '''
